@@ -7,7 +7,7 @@ export const menuGroups = [
     title: 'Belanja',
     items: [
       { label: 'Home', href: '/', disabled: false },
-      { label: 'Semua Kategori', href: '/', disabled: false },
+      { label: 'Semua Kategori', href: '/c/all', disabled: false },
       { label: 'Keranjang', href: '/cart', disabled: false },
     ],
   },
