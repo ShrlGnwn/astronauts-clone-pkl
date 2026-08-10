@@ -1,7 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
+import { specialSections } from '../data/specialSections.js'
 import {banners} from '../data/banners.js'
 
+function SpecialSection() {
+  return (
+    <section className="px-4 py-4">
+      <h2 className="mb-3 text-base font-bold text-slate-900">Spesial di Astro</h2>
+      <div className="grid grid-cols-4 gap-3">
+        {specialSections.map((item) => (
+          <Link key={item.id} to={item.href} className="group relative aspect-square w-full overflow-hidden rounded-xl bg-slate-100 shadow-sm transition-all hover:shadow-md active:scale-95">
+              <img src={item.image} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
 export default function HomePage() {
   const [activeIndex, setActiveIndex] = useState(0)
   const carouselRef = useRef(null)
@@ -94,6 +110,7 @@ export default function HomePage() {
             ))}
           </div>
         </section>
+        <SpecialSection />
       </div>
     </PageShell>
   )
