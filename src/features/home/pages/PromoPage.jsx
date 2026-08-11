@@ -34,9 +34,9 @@ export default function PromoPage() {
         </div>
         <p className="mb-4 text-xs text-slate-500">Menampilkan {productList.length} product promo</p>
         {loading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="flex gap-3 overflow-x-auto px-4 pb-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-64 animate-pulse rounded-xl bg-slate-200"></div>
+              <div key={i} className="h-64 w-40 flex-shrink-0 animate-pulse rounded-xl bg-slate-200"></div>
             ))}
           </div>
         ) : productList.length === 0 ? (
@@ -45,9 +45,11 @@ export default function PromoPage() {
             <p className="mt-1 text-xs text-slate-400">Belum ada produk promo untuk "{promoSlug}"</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="flex gap-3 overflow-x-auto px-4 pb-6 scrollbar-none">
             {productList.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} className="w-36 flex-shrink-0 sm:w-44">
+              <ProductCard  product={product} />
+              </div>
             ))}
           </div>
         )

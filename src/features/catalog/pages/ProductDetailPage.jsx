@@ -34,9 +34,9 @@ export default function ProductDetailPage() {
   return (
     <PageShell title={product.name}>
       <div className="mx-auto max-w-4xl py-6">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="flex flex-col gap-4">
           <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 shadow-xs">
-            <img src={product.images || product.imageUrl || 'https://via.placeholder.com/300'} alt={product.name} className="h-72 w-full object-contain md:h-96" />
+            <img src={product.image || product.img || product.images || product.imageUrl || 'https://via.placeholder.com/300'} alt={product.name} className="h-56 w-full object-contain" />
           </div>
           <div className="flex flex-col justify-between">
             <div>
@@ -68,7 +68,7 @@ export default function ProductDetailPage() {
                     +
                   </button>
                 </div>
-                <button onClick={handleAddToCart} className="flex-1 rounded-xl bg-emerald-600 py-3 text-center text-sm font-bold text-white transition hover:bg-emerald-700 active:scale-[0.98]">
+                <button onClick={handleAddToCart} className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-center text-xs font-bold text-white transition hover:bg-emerald-700 active:scale-[0.98]">
                   + Tambah ke Keranjang
                 </button>
               </div>
