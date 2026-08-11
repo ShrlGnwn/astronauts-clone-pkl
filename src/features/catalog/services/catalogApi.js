@@ -1,16 +1,26 @@
 // TODO (PKL): implement mock async API untuk katalog
-export async function fetchCategories() {
-  throw new Error('fetchCategories belum diimplementasi.')
-}
+import { products } from '../data/products.js'
 
-export async function fetchProducts() {
-  throw new Error('fetchProducts belum diimplementasi.')
-}
+export const catalogApi = {
+  getProducts: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    return products
+  },
 
-export async function fetchProductBySlug() {
-  throw new Error('fetchProductBySlug belum diimplementasi.')
-}
+getProductsBySlug: async (slug) => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  const product = products.find((p) => p.slug === slug)
+  if (!product) throw new Error('Produk tidak ditemukan')
+  return product
+  },
 
-export async function fetchProductsByCategorySlug() {
-  throw new Error('fetchProductsByCategorySlug belum diimplementasi.')
+getProductsByCategory: async (categorySlug) => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  return product.filter((p) => p.categorySlug === categorySlug)
+  },
+
+getPopularProducts: async () => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  return products.filter((p) => p.isPopular)
+  },
 }
