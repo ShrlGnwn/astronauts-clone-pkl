@@ -1,8 +1,10 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
+import {useCart} from '../../cart/CartContext.jsx'
 
 export default function ProductCard({product, onAddToCart}) {
   if (!product) return null
+  const {addItem} = useCart()
   const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency' ,
@@ -12,10 +14,9 @@ export default function ProductCard({product, onAddToCart}) {
   }
   const handleAddClick = (e) => {
     e.preventDefault()
+    addItem(product)
     if (onAddToCart) {
       onAddToCart(product)
-    } else {
-      console.log('Tambah ke keranjang:', product.name)
     }
   }
   const isOutOfStock = product.stock === 0
