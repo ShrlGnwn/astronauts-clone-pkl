@@ -22,18 +22,30 @@ export function CartProvider({ children }) {
       console.error('Gagal menyimpan cart ke localStorage:', error)
     }
   }, [items])
+  const getProductId = (product) => {
+    if (!product) return null
+    return product.id ?? product._id ?? product.id_product ?? product.productId
+  }
   const addItem = (product, qty = 1) => {
+    const id = getProductId(product)
+    if (!id) {
+      console.error('Gagal menambahkan! ID produk tidak ditemukan:', product)
+      return
+    }
+    const normalizedProduct = {...product, id}
     setItems((prevItems) => {
-      const existingIndex = prevItems.findIndex((item) => item.id === product.id)
+      const existingIndex = prevItems.findIndex(
+        (item) => String(item.id) === String(id)
+      )
       if (existingIndex > -1) {
         const updated = [...prevItems]
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          qty: updated[existingIndex].qty + qty,
-        }
-        return updated
+        updated[existingIndex] ={
+        ...updated[existingIndex],
+        qty: updated[existingIndex].qty + qty,
       }
-      return [...prevItems, {...product, qty }]
+      return updated
+    }
+    return [...prevItems, {...normalizedProduct, qty}]
     })
   }
   const updateQty = (productId, qty) => {
