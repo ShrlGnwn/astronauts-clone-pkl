@@ -13,19 +13,19 @@ export const footerNavLinks = [
 export const appDownloadLinks = [
   {
     label: 'Download di App Store',
-    href: 'https://apps.apple.com',
-    image: null, // TODO (PKL): taruh badge App Store
+    href: 'https://www.astronauts.id/mobile-web-assets/img/app-store.svg',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg', // TODO (PKL): taruh badge App Store
   },
   {
     label: 'Download di Google Play',
-    href: 'https://play.google.com',
-    image: null, // TODO (PKL): taruh badge Google Play
+    href: 'https://www.astronauts.id/mobile-web-assets/img/google-store.svg',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg', // TODO (PKL): taruh badge Google Play
   },
 ]
 
 export const socialLinks = [
   { label: 'Instagram', href: 'https://www.instagram.com/astronauts.id' },
   { label: 'Facebook', href: 'https://www.facebook.com/astronauts.id' },
-  { label: 'YouTube', href: 'https://www.youtube.com' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com' },
+  { label: 'YouTube', href: 'https://www.youtube.com/channel/UCdnBvEWKvBuBTlQ-NssCQsQ' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/astronautsid' },
 ]
