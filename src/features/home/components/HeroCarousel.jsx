@@ -30,7 +30,7 @@ export default function HeroCarousel() {
         <div className="relative w-full overflow-hidden">
             <div ref={carouselRef} onScroll={handleScroll} className="flex w-full snap-x snap-mandatory overflow-x-auto scrollbar-none">
                 {banners.map((banner) => (
-                    <div key={banner.id} className="relative h-[333px] w-full flex-shrink-0 snap-center overflow-hidden">
+                    <div key={banner.id} className="relative h-[318px] w-full flex-shrink-0 snap-center overflow-hidden">
                         <Link to={banner.href} className="block h-full w-full">
                             <img src={banner.image} alt={banner.title} className="absolute inset-0 block h-full w-full max-w-full text-transparent object-cover object-bottom" />
                         </Link>
