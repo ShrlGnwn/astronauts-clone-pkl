@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
         element: <RequireAuth />,
         children: [
           { path: 'akun', element: <AccountPage /> },
-          { path: 'akun/pesanan', element: <OrdersPage /> },
+          { path: '/pesanan', element: <OrdersPage /> },
         ],
       },
       { path: '*', element: <div className="p-6 text-left">404 - Halaman tidak ditemukan.</div> },
