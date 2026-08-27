@@ -7,37 +7,71 @@ import {createOrder} from '../services/checkoutApi.js'
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const {cart, totals, clearCart} = useCart()
-  const [address, setAddress] = useState('')
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    address: '',
+  })
   const [paymentMethod, setPaymentMethod] = useState('saldo')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState({})
+  const [apiError, setApiError] = useState('')
+
+  const handleChange = (e) => {
+    const {name, value} = e.target
+    setFormData((prev) => ({...prev, [name]: value}))
+    if (errors[name]) {
+      setErrors((prev) => ({...prev, [name]: ''}))
+    }
+  }
+
+  const validate = () => {
+    const newErrors = {}
+    if (!formData.name.trim()) {
+      newErrors.name = 'Nama penerima wajib diisi'
+    }
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Nomor telepon wajib diisi'
+    } else if (!/^[0-9]+$/.test(formData.phone)) {
+      newErrors.phone = 'Nomor telepon hanya boleh berisi angka'
+    } else if (formData.phone.length < 10) {
+      newErrors.phone = 'Nomor telepon minimal 10 digit'
+    }
+    if (!formData.address.trim()) {
+      newErrors.address = 'Alamat pengirim wajib diisi'
+    }
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleCheckout = async (e) => {
     e.preventDefault()
-    if (!address.trim()) {
-      setError('Alamat pengirim wajib diisi')
-      return
-    }
+    if (!validate()) return
     try {
       setLoading(true)
-      setError('')
-      const payLoad = {
-        items:cart,
-        address,
+      setApiError('')
+      const payload = {
+        items: cart,
+        recipient: {
+          name: formData.name,
+          phone: formData.phone
+        },
+        address: formData.address,
         paymentMethod,
         subtotal: totals?.subtotal || 0,
         shippingFee: totals?.shippingFee || 0,
-        totalPrice: totals?.grandTotal || totals?.subtotal || 0,
+        totalPrice: totals?.grandTotal || totals?.subtotal || 0
       }
-      await createOrder(payLoad)
+      await createOrder(payload)
       clearCart()
       navigate('/account/orders', {replace: true})
     } catch (err) {
-      setError(err.message || 'Gagal membuat pesanan')
+      setApiError(err.message || 'Gagal membuat pesanan')
     } finally {
       setLoading(false)
     }
   }
+
   if (!cart || cart.length === 0) {
     return (
       <PageShell title="Checkout">
@@ -51,23 +85,45 @@ export default function CheckoutPage() {
   return (
     <PageShell title="Checkout">
       <div className="mx-auto max-w-lg pb-12">
-        {error && (
+        {apiError && (
           <div className="mb-4 rounded-xl  bg-rose-50 p-3.5 text-sm font-medium text-rose-600">
-            {error}
+            {apiError}
           </div>
         )}
         <form onSubmit={handleCheckout} className="space-y-5">
-          <div className="rounded-2xl border-slate-100 bg-white p-4 shadow-sm">
-            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
-              Alamat Pengirim
-            </label>
+          <div className="space-y-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Informasi Pengiriman
+            </h2>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-slate-600">Nama penerima</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Masukan nama penerima..."
+                className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
+                  errors.name ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
+                  }`} />
+                  {errors.name && <p className="mt-1 text-xs text-rose-500">{errors.name}</p>}
+            </div>
+            <div>
+            <label className="mb-1 block text-xs font-semibold text-slate-600">Nomor Telepon</label>
+            <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="12345678901" 
+            className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
+              errors.phone ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
+              }`} />
+              {errors.phone && <p className="mt-1 text-xs text-rose-500">{errors.phone}</p>}
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-slate-600">Alamat Lengkap</label>
             <textarea
               rows="3"
-              required
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Masukan alamat lengkap pengirim..."
-              className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:border-indigo-500 focus:outline-none" />
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Masukan alamat lengkap..."
+              className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
+              errors.address ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
+              }`} />
+              {errors.address && <p className="mt-1 text-xs text-rose-500">{errors.address}</p>}
+          </div>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
@@ -90,7 +146,7 @@ export default function CheckoutPage() {
             <div className="mt-3 border-t border-slate-100 pt-3 text-sm font-bold text-slate-800 flex justify-between">
               <span>Total Bayar</span>
               <span className="text-indigo-600">
-                Rp{(totals?.grandTotal || totals?.subtotal || 0).toLocaleString('id-ID')}
+                Rp {(totals?.grandTotal || totals?.subtotal || 0).toLocaleString('id-ID')}
               </span>
             </div>
           </div>
