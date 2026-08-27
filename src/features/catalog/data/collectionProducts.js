@@ -17,14 +17,3 @@ export const collectionProductMap = {
   'biskuit-6011': ['p27', 'p28'],
   'bahan-masak-bumbu-3022': ['p19', 'p20', 'p21', 'p22'],
 }
-
-export const collectionProduct = {
-  getByCollectionKey: (key) => {
-    if(!key) return []
-    const productIds = collectionProductMap[key] || []
-    if (productIds.length > 0) {
-      return productIds.filter((p) => productIds.includes(p.id))
-    }
-    return productIds.filter((p) => p.categorySlug === key)
-  },
-}
