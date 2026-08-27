@@ -2,20 +2,31 @@ import React, {useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
 import ProductCard from '../components/ProductCard.jsx'
-import {collectionProduct} from '../data/collectionProducts.js'
-
+import { catalogApi } from '../services/catalogApi.js'
 export default function CollectionPage() {
   const { collectionKey } = useParams()
   const [productList, setProductList] = useState([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
+    let isMounted = true
     setLoading(true)
-    const timer = setTimeout(() => {
-      const data = collectionProduct.getByCollectionKey(collectionKey)
-      setProductList(data)
-      setLoading(false)
-    }, 300)
-    return () => clearTimeout(timer)
+    catalogApi
+    .getProductsByCollectionKey(collectionKey)
+    .then((data) => {
+      if (isMounted) {
+        setProductList(data)
+        setLoading(false)
+      }
+    })
+    .catch(() => {
+      if (isMounted) {
+        setProductList([])
+        setLoading(false)
+      }
+    })
+    return () => {
+      isMounted = false
+    }
   }, [collectionKey])
   const formatTitle = (str) => {
     if (!str) return 'Koleksi Produk'
