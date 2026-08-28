@@ -2,20 +2,21 @@ import React, {useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
 import ProductCard from '../../catalog/components/ProductCard.jsx'
-import {promoProducts} from '../data/promoProducts.js'
-
+import { catalogApi } from '../../catalog/services/catalogApi.js'
 export default function PromoPage() {
   const { promoSlug } = useParams()
   const [productList, setProductList] = useState([])
   const [loading,setLoading] = useState(true)
   useEffect(() => {
     setLoading(true)
-    const timer = setTimeout(() => {
-      const data = promoProducts.getByPromoSlug(promoSlug)
-      setProductList(data)
-      setLoading(false)
-    }, 300)
-    return () => clearTimeout(timer)
+    catalogApi
+    .getProductsByPromoSlug(promoSlug)
+    .then((data) => setProductList(data || []))
+    .catch((err) => {
+      console.error(err)
+      setProductList([])
+    })
+    .finally(() => setLoading(false))
   }, [promoSlug])
   const formatTitle = (str) => {
     if (!str) return 'promo'

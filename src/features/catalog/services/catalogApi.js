@@ -1,5 +1,6 @@
 // TODO (PKL): implement mock async API untuk katalog
 import { products } from '../data/products.js'
+import { promoProducts } from '../../home/data/promoProducts.js'
 
 export const catalogApi = {
   getProducts: async () => {
@@ -14,9 +15,14 @@ getProductsBySlug: async (slug) => {
   return product
   },
 
+getProductsByPromoSlug: async (promoSlug) => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  return promoProducts.getByPromoSlug(promoSlug)
+},
+
 getProductsByCategory: async (categorySlug) => {
   await new Promise((resolve) => setTimeout(resolve, 300))
-  return product.filter((p) => p.categorySlug === categorySlug)
+  return products.filter((p) => p.categorySlug === categorySlug)
   },
 
 getPopularProducts: async () => {
