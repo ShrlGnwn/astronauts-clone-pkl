@@ -6,7 +6,7 @@ import {createOrder} from '../services/checkoutApi.js'
 
 export default function CheckoutPage() {
   const navigate = useNavigate()
-  const {cart, totals, clearCart} = useCart()
+  const {items, totals, clearCart} = useCart()
   const [address, setAddress] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('saldo')
   const [loading, setLoading] = useState(false)
@@ -22,23 +22,23 @@ export default function CheckoutPage() {
       setLoading(true)
       setError('')
       const payLoad = {
-        items:cart,
+        items:items,
         address,
         paymentMethod,
         subtotal: totals?.subtotal || 0,
         shippingFee: totals?.shippingFee || 0,
-        totalPrice: totals?.grandTotal || totals?.subtotal || 0,
+        totalPrice: totals?.total || 0,
       }
       await createOrder(payLoad)
       clearCart()
-      navigate('/account/orders', {replace: true})
+      navigate('/pesanan', {replace: true})
     } catch (err) {
       setError(err.message || 'Gagal membuat pesanan')
     } finally {
       setLoading(false)
     }
   }
-  if (!cart || cart.length === 0) {
+  if (!items || items.length === 0) {
     return (
       <PageShell title="Checkout">
         <div className="py-12 text-center">
@@ -74,15 +74,15 @@ export default function CheckoutPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Estimasi Tiba</span>
               <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-600">⚡~15 Menit</span>
             </div>
-            <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Ringkasan Pesanan ({totals?.totalItems || cart.length} Barang)</h2>
+            <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Ringkasan Pesanan ({totals?.totalItems || items.length} Barang)</h2>
             <div className="max-h-40 divide-y divide-slate-100 overflow-y-auto">
-              {cart.map((item) => (
+              {items.map((item) => (
                 <div key={item.id} className="flex justify-between py-2 text-sm">
                   <span className="text-slate-700">
-                    {item.name} <strong className="text-slate-400">x{item.quantity}</strong>
+                    {item.name} <strong className="text-slate-400">x{item.qty}</strong>
                   </span>
                   <span className="font-medium text-slate-800">
-                    Rp {(item.price * item.quantity).toLocaleString('id-ID')}
+                    Rp {(item.price * item.qty).toLocaleString('id-ID')}
                   </span>
                 </div>
               ))}
@@ -90,7 +90,7 @@ export default function CheckoutPage() {
             <div className="mt-3 border-t border-slate-100 pt-3 text-sm font-bold text-slate-800 flex justify-between">
               <span>Total Bayar</span>
               <span className="text-indigo-600">
-                Rp{(totals?.grandTotal || totals?.subtotal || 0).toLocaleString('id-ID')}
+                Rp{(totals?.total || 0).toLocaleString('id-ID')}
               </span>
             </div>
           </div>

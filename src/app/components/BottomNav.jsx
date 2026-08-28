@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { bottomNavItems } from '../data/bottomNav.js'
+import { useCart } from '../../features/cart/CartContext.jsx'
 
 
 function Navicon({name, isActive}) {
@@ -52,6 +53,7 @@ function Navicon({name, isActive}) {
 }
 
 export default function BottomNav() {
+  const {totals} = useCart()
   return (
     <nav aria-label="Navigasi utama" className="fixed bottom-0 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2 border-t border-slate-100 bg-white/95 backdrop-blur-md shadow-[0_-2px_10px_rgba(0,0,0,0.4)]">
       <ul className="grid grid-cols-4 px-1 py-1.5">
@@ -65,7 +67,14 @@ export default function BottomNav() {
           >
             {({isActive}) => (
               <>
+                <div className="relative">
                 <Navicon name={item.icon} isActive={isActive} />
+                {item.icon === 'cart' && totals?.totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white shadow-sm">
+                    {totals.totalItems}
+                  </span>
+                )}
+                </div>
                 <span>{item.label}</span>
               </>
             )}

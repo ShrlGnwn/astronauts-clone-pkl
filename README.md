@@ -68,6 +68,6 @@ src/
 | `/checkout` | Checkout |
 | `/login` | Login |
 | `/akun` | Profil (protected) |
-| `/akun/pesanan` | Transaksi (protected) |
+| `/pesanan` | Transaksi (protected) |
 
 Detail struktur HomePage & checklist tugas: **`PLAN.md`**
