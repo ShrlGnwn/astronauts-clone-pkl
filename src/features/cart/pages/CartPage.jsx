@@ -15,7 +15,7 @@ export default function CartPage() {
     formatIDR ? formatIDR(amount) : `Rp${amount?.toLocaleString('id-ID')}`
   return (
     <PageShell title="Keranjang Belanja">
-      <div className="pb-24">
+      <div className="pb-36">
         {items.length > 0 && (
           <div className="flex justify-end mb-3">
             <button type="button" onClick={clearCart} className="text-xs font-semibold text-rose-500 hover:text-rose-600 active:scale-95 transition-transform">Kosongkan Keranjang
@@ -65,8 +65,8 @@ export default function CartPage() {
           </div>  
         )}
         {items.length > 0 && (
-          <div className="fixed bottom-0 inset-x-0 z-40 border-t border-slate-200 bg-white/95 p-4 backdrop-blur-md shadow-lg">
-            <div className="mx-auto max-w-md flex flex-col gap-2">
+          <div className="fixed bottom-[57px] left-1/2 -translate-x-1/2 w-full max-w-[430px] z-20 border-t border-slate-200 bg-white p-3.5 shadow-md">
+            <div className="flex flex-col gap-2">
               {!isMinOrderReached && (
                 <div className="flex items-center gap-2 rounded-xl bg-amber-50 p-2.5 text-xs text-amber-800 border border-amber-200/60">
                   <svg className="h-4 w-4 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,5 +1,5 @@
 import React from 'react'
-export default function SearchBar({value, onChange}) {
+export default function SearchBar({value, onChange = () => {}}) {
     return (
         <div className="mt-2.5">
             <div className="flex items-center gap-2 rounded-xl bg-white/95 px-3.5 py-2.5 shadow-md backdrop-blur-sm">

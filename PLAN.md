@@ -93,7 +93,7 @@ Urutan section dari **atas ke bawah**. Baca baik-baik sebelum ngoding.
 |---|---|---|
 | Home | rumah | `/` |
 | Keranjang | cart | `/cart` |
-| Transaksi | receipt | `/akun/pesanan` |
+| Transaksi | receipt | `/pesanan` |
 | Profil | user | `/akun` |
 
 Sudah disiapkan: `src/app/components/BottomNav.jsx` + data `src/app/data/bottomNav.js`.

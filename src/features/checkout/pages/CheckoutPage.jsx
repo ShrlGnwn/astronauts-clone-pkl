@@ -6,7 +6,7 @@ import {createOrder} from '../services/checkoutApi.js'
 
 export default function CheckoutPage() {
   const navigate = useNavigate()
-  const {cart, totals, clearCart} = useCart()
+  const {items, totals, clearCart} = useCart()
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -50,21 +50,21 @@ export default function CheckoutPage() {
     try {
       setLoading(true)
       setApiError('')
-      const payload = {
-        items: cart,
+      const payLoad = {
+        items,
         recipient: {
           name: formData.name,
-          phone: formData.phone
+          phone: formData.phone,
         },
         address: formData.address,
         paymentMethod,
         subtotal: totals?.subtotal || 0,
         shippingFee: totals?.shippingFee || 0,
-        totalPrice: totals?.grandTotal || totals?.subtotal || 0
+        totalPrice: totals?.total || 0,
       }
-      await createOrder(payload)
+      await createOrder(payLoad)
       clearCart()
-      navigate('/account/orders', {replace: true})
+      navigate('/pesanan', {replace: true})
     } catch (err) {
       setApiError(err.message || 'Gagal membuat pesanan')
     } finally {
@@ -72,7 +72,7 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!cart || cart.length === 0) {
+  if (!items || items.length === 0) {
     return (
       <PageShell title="Checkout">
         <div className="py-12 text-center">
@@ -82,11 +82,12 @@ export default function CheckoutPage() {
       </PageShell>
     )
   }
+
   return (
     <PageShell title="Checkout">
       <div className="mx-auto max-w-lg pb-12">
         {apiError && (
-          <div className="mb-4 rounded-xl  bg-rose-50 p-3.5 text-sm font-medium text-rose-600">
+          <div className="mb-4 rounded-xl bg-rose-50 p-3.5 text-sm font-medium text-rose-600">
             {apiError}
           </div>
         )}
@@ -97,56 +98,69 @@ export default function CheckoutPage() {
             </h2>
             <div>
               <label className="mb-1 block text-xs font-semibold text-slate-600">Nama penerima</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Masukan nama penerima..."
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Masukan nama penerima..."
                 className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
                   errors.name ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
-                  }`} />
-                  {errors.name && <p className="mt-1 text-xs text-rose-500">{errors.name}</p>}
+                }`}
+              />
+              {errors.name && <p className="mt-1 text-xs text-rose-500">{errors.name}</p>}
             </div>
             <div>
-            <label className="mb-1 block text-xs font-semibold text-slate-600">Nomor Telepon</label>
-            <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="12345678901" 
-            className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
-              errors.phone ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
-              }`} />
+              <label className="mb-1 block text-xs font-semibold text-slate-600">Nomor Telepon</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="12345678901"
+                className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
+                  errors.phone ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
+                }`}
+              />
               {errors.phone && <p className="mt-1 text-xs text-rose-500">{errors.phone}</p>}
             </div>
             <div>
               <label className="mb-1 block text-xs font-semibold text-slate-600">Alamat Lengkap</label>
-            <textarea
-              rows="3"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Masukan alamat lengkap..."
-              className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
-              errors.address ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
-              }`} />
+              <textarea
+                rows="3"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Masukan alamat lengkap..."
+                className={`w-full rounded-xl border p-3 text-sm focus:outline-none ${
+                  errors.address ? 'border-rose-500 bg-rose-50/30' : 'border-slate-200 focus:border-indigo-500'
+                }`}
+              />
               {errors.address && <p className="mt-1 text-xs text-rose-500">{errors.address}</p>}
-          </div>
+            </div>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Estimasi Tiba</span>
               <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-600">⚡~15 Menit</span>
             </div>
-            <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Ringkasan Pesanan ({totals?.totalItems || cart.length} Barang)</h2>
+            <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Ringkasan Pesanan ({totals?.totalItems || items.length} Barang)</h2>
             <div className="max-h-40 divide-y divide-slate-100 overflow-y-auto">
-              {cart.map((item) => (
+              {items.map((item) => (
                 <div key={item.id} className="flex justify-between py-2 text-sm">
                   <span className="text-slate-700">
-                    {item.name} <strong className="text-slate-400">x{item.quantity}</strong>
+                    {item.name} <strong className="text-slate-400">x{item.qty}</strong>
                   </span>
                   <span className="font-medium text-slate-800">
-                    Rp {(item.price * item.quantity).toLocaleString('id-ID')}
+                    Rp {(item.price * item.qty).toLocaleString('id-ID')}
                   </span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 border-t border-slate-100 pt-3 text-sm font-bold text-slate-800 flex justify-between">
+            <div className="mt-3 flex justify-between border-t border-slate-100 pt-3 text-sm font-bold text-slate-800">
               <span>Total Bayar</span>
               <span className="text-indigo-600">
-                Rp {(totals?.grandTotal || totals?.subtotal || 0).toLocaleString('id-ID')}
+                Rp{(totals?.total || 0).toLocaleString('id-ID')}
               </span>
             </div>
           </div>
@@ -166,7 +180,8 @@ export default function CheckoutPage() {
                     paymentMethod === method.id
                       ? 'border-indigo-600 bg-indigo-50/50 font-medium text-indigo-900'
                       : 'border-slate-200 text-slate-600'
-                  }`}>
+                  }`}
+                >
                   <span>{method.name}</span>
                   <input
                     type="radio"
@@ -174,7 +189,8 @@ export default function CheckoutPage() {
                     value={method.id}
                     checked={paymentMethod === method.id}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="accent-indigo-600" />
+                    className="accent-indigo-600"
+                  />
                 </label>
               ))}
             </div>

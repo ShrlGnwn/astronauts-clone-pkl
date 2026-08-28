@@ -16,7 +16,7 @@ export const menuGroups = [
     title: 'Akun Saya',
     items: [
       { label: 'Profil', href: '/akun', disabled: false },
-      { label: 'Pesanan Saya', href: '/akun/pesanan', disabled: false },
+      { label: 'Pesanan Saya', href: '/pesanan', disabled: false },
       { label: 'Saldo & Astro Coin', href: '/akun', disabled: false },
     ],
   },
