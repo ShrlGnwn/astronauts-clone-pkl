@@ -2,20 +2,21 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { demoUsers } from '../../features/auth/data/users.js'
 
 const AuthContext = createContext(null)
+const AUTH_STORAGE_KEY = 'astronauts_clone_pkl:auth:user'
 
 export function AuthProvider({ children }) {
   // TODO (PKL): implement login/logout + persist localStorage
 
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('auth_user')
+    const savedUser = localStorage.getItem(AUTH_STORAGE_KEY)
     return savedUser ? JSON.parse(savedUser) : null
   })
   const [orders, setOrders] = useState([])
   useEffect(() =>{
     if (user) {
-      localStorage.setItem('auth_user', JSON.stringify(user))
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user))
     } else {
-      localStorage.removeItem('auth_user')
+      localStorage.removeItem(AUTH_STORAGE_KEY)
     }
   }, [user])
 
@@ -25,9 +26,9 @@ export function AuthProvider({ children }) {
     )
     if (foundUser) {
       const userData = {
-        id: foundUser.id,
-        name: foundUser.name,
-        email: foundUser.email
+       ...foundUser,
+       saldo: 25000,
+       astroCoin: 1500
       }
       setUser(userData)
       return {ok:true}
