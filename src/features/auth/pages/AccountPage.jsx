@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
+import { useAuth } from '../AuthContext.jsx'
 
 export default function AccountPage() {
   const navigate = useNavigate()
-  const [user, setUser] = useState(null)
+  const {user, logout, isAuthenticated} = useAuth()
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-    } else {
+    if (!isAuthenticated) {
       navigate('/login')
     }
-  }, [navigate])
+  }, [isAuthenticated, navigate])
   const handleLogout = () => {
-    localStorage.removeItem('user')
+    logout()
     navigate('/login')
   }
   if (!user) return null
