@@ -1,15 +1,35 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
-import {products} from '../../catalog/data/products.js'
-
+import { catalogApi } from '../services/catalogApi.js'
 export default function ProductDetailPage() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const [qty, setQty] = useState(1)
-  const product = products.find(
-    (p) => p.slug === slug || p.id === slug
-  )
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    catalogApi.getProductsBySlug(slug)
+    .then((data) => setProduct(data))
+    .catch((err) => {
+      console.error(err)
+      setProduct(null)
+    })
+    .finally(() => setLoading(false))
+  }, [slug])
+
+  if (loading) {
+    return (
+      <PageShell title="Memuat Produk...">
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <p className="text-sm font-semibold text-slate-500">Memuat detail produk</p>
+        </div>
+      </PageShell>
+    )
+  }
+
   if (!product) {
     return (
       <PageShell title="Produk Tidak Ditemukan">
