@@ -20,6 +20,10 @@ export default function ProductCard({product, onAddToCart}) {
     }
   }
   const isOutOfStock = product.stock === 0
+  const hasDiscount = product.originalPrice && product.originalPrice > product.price
+  const discountPercent = hasDiscount
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0
   return (
     <div className="group relative flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3 shadow-xs transition-all hover:shadow-md">
       <Link to={`/p/${product.slug}`} className="flex flex-col gap-1.5">
@@ -28,8 +32,11 @@ export default function ProductCard({product, onAddToCart}) {
             isOutOfStock ? 'opacity-40' : ''
           }`}
           loading="lazy" />
+          {hasDiscount && !isOutOfStock &&(
+            <span className="absolute top-1.5 left-1.5 rounded-md bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-xs">{discountPercent}% OFF</span>
+          )}
           {isOutOfStock && (
-            <span className="absolute inset-0 m-auto flex h-fit w-fit rounded-md bg-black/60 px-2 py-1 text-[10px] font-semibold text-white">Habis</span>
+            <span className="absolute inset-0 m-auto flex h-fit rounded-md bg-black/60 px-2 py-1 text-[10px] font-semibold text-white">Habis</span>
           )}
         </div>
         <span className="text-[10px] font-medium text-slate-400">{product.unit}</span>
@@ -37,7 +44,7 @@ export default function ProductCard({product, onAddToCart}) {
       </Link>
       <div className="mt-2 flex items-end justify-between gap-1">
         <div className="flex flex-col">
-          {product.originalPrice && product.originalPrice > product.price && (
+          {hasDiscount && (
             <span className="text-[10px] text-slate-400 line-through">{formatRupiah(product.originalPrice)}</span>
           )}
           <span className="text-xs font-bold text-slate-900">{formatRupiah(product.price)}</span>
