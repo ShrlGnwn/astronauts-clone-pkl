@@ -9,7 +9,11 @@ export default function CheckoutPage() {
   const navigate = useNavigate()
   const {items, totals, clearCart} = useCart()
   const {addAstroCoin} = useAuth()
-  const [address, setAddress] = useState('')
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    address: '',
+  })
   const [paymentMethod, setPaymentMethod] = useState('saldo')
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
