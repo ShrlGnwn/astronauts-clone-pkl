@@ -33,6 +33,9 @@ export const catalogApi = {
 
   getProductsByCollectionKey: async (collectionKey) => {
     await new Promise((resolve) => setTimeout(resolve, 300))
+    if (collectionKey === 'all') {
+      return products
+    }
     const productIds = collectionProductMap[collectionKey] || []
     return products.filter((p) => productIds.includes(p.id))
   },
