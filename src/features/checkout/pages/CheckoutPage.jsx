@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
 import {useCart} from '../../cart/CartContext.jsx'
 import {createOrder} from '../services/checkoutApi.js'
+import { useAuth } from '../../auth/AuthContext.jsx'
 
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const {items, totals, clearCart} = useCart()
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    address: '',
-  })
+  const {addAstroCoin} = useAuth()
+  const [address, setAddress] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('saldo')
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
@@ -63,6 +61,10 @@ export default function CheckoutPage() {
         totalPrice: totals?.total || 0,
       }
       await createOrder(payLoad)
+      const earnedCoin = Math.floor(payLoad.totalPrice * 0.01)
+      if (earnedCoin > 0) {
+        addAstroCoin(earnedCoin)
+      }
       clearCart()
       navigate('/pesanan', {replace: true})
     } catch (err) {

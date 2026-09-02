@@ -9,7 +9,7 @@
 //   stock         -> 0 = habis
 //   isPopular     -> section "Paling Laris"
 
-const img = (seed) => `https://picsum.photos/seed/${seed}/600/600`
+const img = (seed) => `https://dummyjson.com/image/600x600?text=${seed}`
 
 export const products = [
   // --- Buah Segar ---

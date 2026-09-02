@@ -26,9 +26,9 @@ export function AuthProvider({ children }) {
     )
     if (foundUser) {
       const userData = {
-       ...foundUser,
-       saldo: 25000,
-       astroCoin: 1500
+        ...foundUser,
+        saldo: 250000,
+        astroCoin: 1500
       }
       setUser(userData)
       return {ok:true}
@@ -43,6 +43,13 @@ export function AuthProvider({ children }) {
   const refreshOrders = () => {
     //masih kosong unutk saat ini
   }
+  const addAstroCoin = (amount) => {
+    if (!user) return
+    setUser((prevUser) => ({
+      ...prevUser,
+      astroCoin: (prevUser?.astroCoin || 0) + amount,
+    }))
+  }
 
   const value = {
     user,
@@ -51,6 +58,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     refreshOrders,
+    addAstroCoin,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
