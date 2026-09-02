@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import PageShell from '../../../shared/ui/PageShell.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import SearchBar from '../../home/components/SearchBar.jsx'
@@ -7,9 +7,24 @@ import { catalogApi } from '../services/catalogApi.js'
 
 export default function CollectionPage() {
   const { collectionKey } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
   const [productList, setProductList] = useState([])
-  const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const q = searchParams.get('q') || ''
+    setSearchQuery(q)
+  }, [searchParams])
+
+  const handleSearchChange = (val) => {
+    setSearchQuery(val)
+    if (val) {
+      setSearchParams({q: val}, {replace:true})
+    } else {
+      setSearchParams({}, {replace: true})
+    }
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -47,7 +62,7 @@ export default function CollectionPage() {
 
   return (
     <PageShell title={formatTitle(collectionKey)}>
-      <SearchBar value={searchQuery} onChange={setSearchQuery} />
+      <SearchBar value={searchQuery} onChange={handleSearchChange} />
       <div className="py-4">
         <p className="mb-4 text-xs text-slate-500">
           Menampilkan {filteredProducts.length} produk

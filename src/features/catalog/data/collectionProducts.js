@@ -1,5 +1,7 @@
 // produk apa aja yang tampil di tiap halaman kategori. isinya id dari products.js
 
+import { products } from "./products"
+
 export const collectionProductMap = {
   'astro-goods-2564': ['p1', 'p6', 'p10', 'p16'],
   'produk-terbaru-1024': ['p3', 'p7', 'p13', 'p23'],
@@ -21,10 +23,11 @@ export const collectionProductMap = {
 export const collectionProduct = {
   getByCollectionKey: (key) => {
     if(!key) return []
+    if (key=== 'all') return products
     const productIds = collectionProductMap[key] || []
     if (productIds.length > 0) {
-      return productIds.filter((p) => productIds.includes(p.id))
+      return products.filter((p) => productIds.includes(p.id))
     }
-    return productIds.filter((p) => p.categorySlug === key)
+    return products.filter((p) => p.categorySlug === key)
   },
 }
