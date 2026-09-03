@@ -6,7 +6,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([])
 
   useEffect(() => {
-    const savedOrders = localStorage.getItem('orders')
+    const savedOrders = localStorage.getItem('astronauts_clone_pkl:orders')
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders))
     }
@@ -28,9 +28,9 @@ export default function OrdersPage() {
                 <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
                   <div>
                     <p className="text-xs font-bold text-slate-700">ID Pesanan: #{order.id || `ORD-${index + 1}`}</p>
-                    <p className="text-[10px] text-slate-400">{order.date || 'Hari ini'}</p>
+                    <p className="text-[10px] text-slate-400">{order.createdAt ? new Date(order.createdAt).toLocaleDateString('id-ID') : order.date || 'Hari ini'}</p>
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-600 border border-emerald-100">{order.status || 'Selesai'}</span>
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-600 border border-emerald-100">{order.status || 'Diproses'}</span>
                 </div>
                 {order.items && order.items.length > 0 && (
                   <div className="mb-3 space-y-2">
@@ -47,7 +47,7 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                   <span className="text-xs text-slate-500">Total Pembayaran</span>
                   <span>
-                    Rp {order.total ? order.total.toLocaleString('id-ID') : '0'}
+                    Rp {(order.totalPrice || order.total || 0).toLocaleString('id-ID')}
                   </span>
                 </div>
               </div> 
