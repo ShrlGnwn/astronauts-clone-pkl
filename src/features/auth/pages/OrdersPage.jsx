@@ -27,8 +27,8 @@ export default function OrdersPage() {
               <div key={order.id || index} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                 <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
                   <div>
-                    <p className="text-xs font-bold text-slate-700">ID Pesanan: #{order.id || `ORD-${index + 1}`}</p>
-                    <p className="text-[10px] text-slate-400">{order.createdAt ? new Date(order.createdAt).toLocaleDateString('id-ID') : order.date || 'Hari ini'}</p>
+                    <p className="text-xs font-bold text-slate-700">ID Pesanan: #{order.id}</p>
+                    <p className="text-[10px] text-slate-400">{order.createdAt ? new Date(order.createdAt).toLocaleDateString('id-ID') : '-'}</p>
                   </div>
                   <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-600 border border-emerald-100">{order.status || 'Diproses'}</span>
                 </div>
@@ -37,9 +37,9 @@ export default function OrdersPage() {
                     {order.items.map((item, i) => (
                       <div key={i} className="flex justify-between text-xs text-slate-600">
                         <span>
-                          {item.name} <strong className="text-slate-400">X{item.quantity || 1}</strong>
+                          {item.name} <strong className="text-slate-400">X{item.qty || item.quantity || 1}</strong>
                         </span>
-                        <span>Rp {(item.price * (item.quantity || 1)).toLocaleString('id-ID')}</span>
+                        <span>Rp {((item.price || 0)  * (item.qty || item.quantity || 1)).toLocaleString('id-ID')}</span>
                       </div>
                     ))}
                   </div>
@@ -47,7 +47,7 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                   <span className="text-xs text-slate-500">Total Pembayaran</span>
                   <span>
-                    Rp {(order.totalPrice || order.total || 0).toLocaleString('id-ID')}
+                    Rp {(order.totalPrice || 0).toLocaleString('id-ID')}
                   </span>
                 </div>
               </div> 
