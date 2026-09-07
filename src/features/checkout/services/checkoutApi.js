@@ -16,9 +16,9 @@ export async function createOrder(orderPayLoad) {
     estimatedArrival: '15 Menit',
     status: 'Diproses'
   }
-  const existingOrders = JSON.parse(localStorage.getItem('user_orders') || '[]')
+  const existingOrders = JSON.parse(localStorage.getItem('astronauts_clone_pkl:orders') || '[]')
   const updatedOrders = [newOrder, ...existingOrders]
-  localStorage.setItem('user_orders', JSON.stringify(updatedOrders))
+  localStorage.setItem('astronauts_clone_pkl:orders', JSON.stringify(updatedOrders))
 
   return newOrder
 }
