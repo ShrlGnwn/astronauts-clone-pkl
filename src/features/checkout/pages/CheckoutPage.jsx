@@ -65,7 +65,7 @@ export default function CheckoutPage() {
         totalPrice: totals?.total || 0,
       }
       await createOrder(payLoad)
-      const earnedCoin = Math.floor(payLoad.totalPrice * 0.01)
+      const earnedCoin = Math.floor(payLoad.totalPrice / 5)
       if (earnedCoin > 0) {
         addAstroCoin(earnedCoin)
       }

@@ -53,7 +53,7 @@ export default function ProductDetailPage() {
 
   return (
     <PageShell title={product.name}>
-      <div className="mx-auto max-w-4xl py-6">
+      <div className="mx-auto max-w-[430px] py-6">
         <div className="flex flex-col gap-4">
           <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 shadow-xs">
             <img src={product.image || product.img || product.images || product.imageUrl || 'https://via.placeholder.com/300'} alt={product.name} className="h-56 w-full object-contain" />
@@ -63,7 +63,7 @@ export default function ProductDetailPage() {
               {product.unit && (
                 <span className="inline-block rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">{product.unit}</span>
               )}
-              <h1 className="mt-2 text-xl font-bold text-slate-900 md:text-2xl">{product.name}</h1>
+              <h1 className="mt-2 text-xl font-bold text-slate-900">{product.name}</h1>
               <div className="mt-4 flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-slate-900">Rp{product.price?.toLocaleString('id-ID')}</span>
                 {product.originalPrice && product.originalPrice > product.price && (
