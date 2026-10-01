@@ -8,17 +8,25 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    const res = login(email, password)
-    if (res.ok) {
-      setErrorMsg('')
-      navigate('/akun')
-    } else {
-      setErrorMsg(res.error || 'Email atau password salah!')
+    setErrorMsg('')
+    setLoading(true)
+    try {
+      const res = await login(email, password)
+      if (res && res.ok) {
+        navigate('/akun')
+      } else {
+        setErrorMsg(res?.error || 'Email atau password salah!')
+      }
+    } catch (err) {
+      setErrorMsg('Gagal terhubung ke server backend')
+    } finally {
+      setLoading(false)
+    }
   }
-}
   return (
     <PageShell title="Login">
       <div className="mx-auto my-8 max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
@@ -34,19 +42,38 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="mb-1 block text-xs font-semibold text-slate-600">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="demo@demo.com" required
-            className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-slate-400 focus:outline-none" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="demo@demo.com"
+              required
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-slate-400 focus:outline-none"
+            />
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold text-slate-600">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="........" required
-            className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-slate-400 focus:outline-none" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="........"
+              required
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-slate-400 focus:outline-none"
+            />
           </div>
-          <button type="submit" className="w-full rounded-xl bg-sky-500 py-3 text-sm font-bold text-white shadow-md transition hover:bg-sky-600">Masuk</button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-sky-500 py-3 text-sm font-bold text-white shadow-md transition hover:bg-sky-600 disabled:opacity-50"
+          >
+            {loading ? 'Memproses...' : 'Masuk'}
+          </button>
         </form>
+
         <div className="mt-6 rounded-xl bg-slate-50 p-3 text-center text-xs text-slate-500">
           <p className="font-semibold text-slate-700">Kredensial Demo:</p>
-          <p>Email: <code className="text-emerald-600">demo@demo.com</code></p>
+          <p>Email: <code className="text-emerald-600">customer@demo.com</code></p>
           <p>password:: <code className="text-emerald-600">password</code></p>
         </div>
       </div>

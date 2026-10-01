@@ -53,6 +53,12 @@ export default function CheckoutPage() {
       setLoading(true)
       setApiError('')
       const payLoad = {
+        paymentMethod: paymentMethod,
+        paymentMethod: paymentMethod,
+        name: formData.name,
+        phone: formData.phone,
+        recipient_name: formData.name,
+        phone_number: formData.phone,
         items,
         recipient: {
           name: formData.name,

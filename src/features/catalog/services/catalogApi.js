@@ -1,43 +1,82 @@
 // TODO (PKL): implement mock async API untuk katalog
-import { products } from '../data/products.js'
-import { collectionProductMap } from '../data/collectionProducts.js'
-import { promoProducts } from '../../home/data/promoProducts.js'
+const API_BASE_URL = 'http://localhost:8000/api'
+const TOKEN_STORAGE_KEY = 'astronauts_clone_pkl:auth:token'
+
+const getHeaders = () => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+  return {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    ...(token ? {'Authorization': `Bearer ${token}`} : {}),
+  }
+}
+const handleResponse = async (res, defaultFallback = []) => {
+  if (!res.ok) return defaultFallback
+  const json = await res.json()
+  if (Array.isArray(json)) return json
+  if (Array.isArray(json.data)) return json.data
+  return json.data || json || defaultFallback
+}
 
 export const catalogApi = {
   getProducts: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    return products
+    try {
+      const res = await fetch(`${API_BASE_URL}/products`, { headers: getHeaders() })
+      return await handleResponse(res, [])
+    } catch (error) {
+      console.error('getProducts error:', error)
+      return []
+    }
   },
 
   getProductsBySlug: async (slug) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    const product = products.find((p) => p.slug === slug)
-    if (!product) throw new Error('Produk tidak ditemukan')
-    return product
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/${slug}`, { headers: getHeaders() })
+      return await handleResponse(res, null)
+    } catch (error) {
+      console.error('getProductsBySlug error:', error)
+      return null
+    }
   },
 
   getProductsByPromoSlug: async (promoSlug) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    return promoProducts.getByPromoSlug(promoSlug)
+    try {
+      const res = await fetch(`${API_BASE_URL}/promos/${promoSlug}`, { headers: getHeaders() })
+      return await handleResponse(res, [])
+    } catch (error) {
+      console.error('getProductsByPromoSlug error:', error)
+      return []
+    }
   },
 
   getProductsByCategory: async (categorySlug) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    return products.filter((p) => p.categorySlug === categorySlug)
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories/${categorySlug}/products`, { headers: getHeaders() })
+      return await handleResponse(res, [])
+    } catch (error) {
+      console.error('getProductsByCategory error:', error)
+      return []
+    }
   },
 
   getPopularProducts: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    return products.filter((p) => p.isPopular)
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/popular`, { headers: getHeaders() })
+      return await handleResponse(res, [])
+    } catch (error) {
+      console.error('getPopularProducts error:', error)
+      return []
+    }
   },
 
   getProductsByCollectionKey: async (collectionKey) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    if (collectionKey === 'all') {
-      return products
+    try {
+      const res = await fetch(`${API_BASE_URL}/collections/${collectionKey}`, { headers: getHeaders() })
+      return await handleResponse(res, [])
+    } catch (error) {
+      console.error('getProductsByCollectionKey error:', error)
+      return []
     }
-    const productIds = collectionProductMap[collectionKey] || []
-    return products.filter((p) => productIds.includes(p.id))
   },
 }
 

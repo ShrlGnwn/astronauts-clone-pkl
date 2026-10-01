@@ -12,6 +12,8 @@ export default function CollectionPage() {
   const [productList, setProductList] = useState([])
   const [loading, setLoading] = useState(true)
 
+  const cleanKey = collectionKey ? collectionKey.replace(/-\d+$/, '') : ''
+
   useEffect(() => {
     const q = searchParams.get('q') || ''
     setSearchQuery(q)
@@ -20,33 +22,50 @@ export default function CollectionPage() {
   const handleSearchChange = (val) => {
     setSearchQuery(val)
     if (val) {
-      setSearchParams({q: val}, {replace:true})
+      setSearchParams({ q: val }, { replace: true })
     } else {
-      setSearchParams({}, {replace: true})
+      setSearchParams({}, { replace: true })
     }
   }
 
   useEffect(() => {
     let isMounted = true
     setLoading(true)
-    catalogApi
-      .getProductsByCollectionKey(collectionKey)
-      .then((data) => {
+
+    const fetchCollection = async () => {
+      try {
+        // 1. Coba fetch ke Backend dengan cleanKey (misal 'astro-goods')
+        let data = await catalogApi.getProductsByCollectionKey(cleanKey)
+
+        if (!data || data.length === 0) {
+          data = await catalogApi.getProductsByCategory(cleanKey)
+        }
+
+        if (!data || data.length === 0) {
+          data = await catalogApi.getProducts()
+        }
+
         if (isMounted) {
           setProductList(data || [])
           setLoading(false)
         }
-      })
-      .catch(() => {
+      } catch (err) {
+        console.error('Gagal memuat produk koleksi:', err)
         if (isMounted) {
-          setProductList([])
+          // Jika API error, fallback ambil semua produk
+          const fallbackData = await catalogApi.getProducts().catch(() => [])
+          setProductList(fallbackData)
           setLoading(false)
         }
-      })
+      }
+    }
+
+    fetchCollection()
+
     return () => {
       isMounted = false
     }
-  }, [collectionKey])
+  }, [collectionKey, cleanKey])
 
   const formatTitle = (str) => {
     if (!str) return 'Koleksi Produk'
@@ -69,7 +88,7 @@ export default function CollectionPage() {
         </p>
 
         {loading ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-64 animate-pulse rounded-xl bg-slate-200"></div>
             ))}
@@ -84,9 +103,9 @@ export default function CollectionPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id || product._id} product={product} />
             ))}
           </div>
         )}
