@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { demoUsers } from '../../features/auth/data/users.js'
 
 const AuthContext = createContext(null)
 const AUTH_STORAGE_KEY = 'astronauts_clone_pkl:auth:user'
-const ORDERS_STORAGE_KEY ='astronauts_clone_pkl:orders'
+const TOKEN_STORAGE_KEY = 'astronauts_clone_pkl:auth:token'
+const API_BASE_URL = 'http://localhost:8000/api'
 
 export function AuthProvider({ children }) {
   // TODO (PKL): implement login/logout + persist localStorage
@@ -11,6 +11,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem(AUTH_STORAGE_KEY)
     return savedUser ? JSON.parse(savedUser) : null
+  })
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem(TOKEN_STORAGE_KEY) || null
   })
   const [orders, setOrders] = useState([])
   useEffect(() =>{
@@ -22,40 +25,85 @@ export function AuthProvider({ children }) {
   }, [user])
 
   useEffect(() => {
-    refreshOrders()
-  }, [])
-
-  const login = (email, password) => {
-    const foundUser = demoUsers.find(
-      (u) => u.email === email && u.password === password
-    )
-    if (foundUser) {
-      const userData = {
-        ...foundUser,
-        saldo: 250000,
-        astroCoin: 1500
-      }
-      setUser(userData)
+    if (token) {
+      localStorage.setItem(TOKEN_STORAGE_KEY, token)
       refreshOrders()
-      return {ok:true}
+    } else {
+    localStorage.removeItem(TOKEN_STORAGE_KEY)
+    setOrders([])
     }
-    return {ok:false,error: 'Email atau password salah'}
-  }
+  }, [token])
 
-  const logout = () => {
+  const login = async (email, password) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({email, password}),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        const extractedUser = data.user || data.data?.user || data.data
+        const extractedToken = data.token || data.access_token || data.data?.token
+        if (!extractedUser || !extractedToken) {
+          return {
+            ok: false,
+            error: 'Format response server tidak sesuai (user/token hilang)'
+        }
+      }
+      setUser(extractedUser)
+      setToken(extractedToken)
+      refreshOrders(extractedToken)
+      return {ok: true}
+    } else {
+      return {
+        ok: false,
+        error: data.message || 'Email atau password salah'
+      }
+    }
+    } catch (error) {
+      console.error('Login request failed:', error)
+      return {ok: false, error: 'Gagal terhubung ke server backend'}
+    }
+  }
+  
+  const logout = async () => {
+    if (token) {
+      try {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+          },
+        })
+      } catch (err) {
+       console.error('Logout error:', err)
+       }
+    }
     setUser(null)
+    setToken(null)
     setOrders([])
   }
-  const refreshOrders = () => {
-    const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY)
-    if (savedOrders) {
-      try {
-        setOrders(JSON.parse(savedOrders))
-      } catch (error) {
-        console.error('Failed to parse orders:', error)
+  const refreshOrders = async () => {
+    const currentToken = token || localStorage.getItem(TOKEN_STORAGE_KEY)
+    if (!currentToken) return
+    try {
+      const res = await fetch(`${API_BASE_URL}/orders`, {
+        headers: {
+          'Authorization': `Bearer ${currentToken}`,
+          'Accept': 'application/json',
+        },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setOrders(Array.isArray(data) ? data : (data.data || []))
       }
-    } else {
-      setOrders([])
+    } catch (error) {
+      console.error('Failed to fetch orders:', error)
     }
   }
   const addAstroCoin = (amount) => {
@@ -68,6 +116,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    token,
     isAuthenticated: !!user,
     orders,
     login,
